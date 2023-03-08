@@ -1,0 +1,57 @@
+<script type="text/javascript">
+  (function ($) {
+    $(document).ready(function () {
+      cmg_gdpr_check = getCookie("GDPR");
+      cmg_gdpr_all_check = getCookie("GDPR_All");
+      cmg_gdpr_first_check = getCookie("GDPR_First");
+      cmg_gdpr_reject_check = getCookie("GDPR_Reject");
+      if (cmg_gdpr_check != null && cmg_gdpr_check == "true") {
+        if (cmg_gdpr_all_check == null && cmg_gdpr_first_check == null && cmg_gdpr_reject_check == null) { // user is visiting our site firsttime from one of GDPR countries
+          $("#yourCookieChoices").show();
+          if(typeof cmg_rafgp == "function") {
+          	cmg_rafgp(); //$('.content-wrapper').css('pointer-events','default');
+          }
+        } else if (cmg_gdpr_all_check == null) { // user selected first party cookies or rejected all cookies so we need to remove ads
+          if(typeof cmg_rafgp == "function") {
+            cmg_rafgp();
+          }
+          var footerlink = '<li class="menu__item is-leaf last leaf"><a href="/cookie-choices" class="menu__link">Your Cookie Choices</a></li>';
+          $(".footer-menu-column-0 .footer-menu").append(footerlink);
+          // $('.content-wrapper').css('pointer-events','default');
+        } else if (cmg_gdpr_all_check !== null) { // user accepted all cookies
+          var footerlink = '<li class="menu__item is-leaf last leaf"><a href="/cookie-choices" class="menu__link">Your Cookie Choices</a></li>';
+          $(".footer-menu-column-0 .footer-menu").append(footerlink);
+        }
+      }
+    });
+  }(jQuery));
+
+  function closeCookieChoices() {
+    var d = new Date();
+    d.setTime(d.getTime() + (365 * 2 * 24 * 60 * 60 * 1000));
+    var expires = "expires=" + d.toUTCString();
+    document.cookie = "GDPR_All=true;" + expires + ";path=/";
+    document.cookie = "GDPR_CHOICE=GDPR_All;" + expires + ";path=/";
+    $("#yourCookieChoices").hide();
+    var footerlink = '<li class="last leaf"><a href="/cookie-choices" class="menu__link">YOUR COOKIE CHOICES</a></li>';
+    $(".footer-menu-column-0 ul.footer-menu").append(footerlink);
+  }
+
+  function acceptAllCookies() {
+    var d = new Date();
+    d.setTime(d.getTime() + (365 * 2 * 24 * 60 * 60 * 1000));
+    var expires = "expires=" + d.toUTCString();
+    document.cookie = "GDPR_All=true;" + expires + ";path=/";
+    window.location = location.href;
+  }
+
+  function acceptFirstpartyCookies() {
+    document.cookie = "GDPR_First=true" + ";path=/";
+    window.location = location.href;
+  }
+
+  function rejectAllCookies() {
+    document.cookie = "GDPR_Reject=true" + ";path=/";
+    window.location = location.href;
+  }
+</script>
